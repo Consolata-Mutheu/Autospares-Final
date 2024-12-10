@@ -1,0 +1,81 @@
+{% extends 'auth.html' %}
+{% load static %}
+
+{% block content %}
+<div class="main-wrapper login-body">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6 col-lg-5">
+                <div class="login-box shadow-lg p-4 rounded bg-white">
+                    <div class="text-center">
+                        <h2 class="mb-4">Welcome Back</h2>
+                        <p class="text-muted mb-4">Sign in to continue to your dashboard</p>
+                    </div>
+
+                    <!-- Display error messages -->
+                    {% if messages %}
+                    <div class="alert alert-danger">
+                        {% for message in messages %}
+                            <p class="mb-0">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Login Form -->
+                    <form action="" method="POST" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required>
+                            <div class="invalid-feedback">
+                                Please enter your email.
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+                            <div class="invalid-feedback">
+                                Please enter your password.
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    </form>
+
+                    <!-- Additional Links -->
+                    <div class="text-center mt-3">
+                        <a href="#" class="text-decoration-none text-primary">Forgot Password?</a>
+                    </div>
+                    <div class="text-center mt-3">
+                        <p class="mb-0">Don't have an account? <a href="#" class="text-decoration-none text-primary">Register</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add custom styles for better design -->
+<style>
+    .login-body {
+        background: #f8f9fa;
+    }
+    .login-box {
+        border-radius: 10px;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+    .form-control {
+        height: 50px;
+        border-radius: 5px;
+    }
+    .form-label {
+        font-weight: 500;
+    }
+</style>
+{% endblock content %}

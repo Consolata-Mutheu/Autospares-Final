@@ -1,0 +1,89 @@
+{% extends 'main.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="page-wrapper">
+			<div class="content container-fluid">
+				<div class="page-header">
+					<div class="row align-items-center">
+						<div class="col">
+							<h3 class="page-title mt-5">Add Items</h3> </div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-12">
+		                <form action="" method="POST">
+                        {% csrf_token %}
+							<div class="row formtype">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label>Item Name</label>
+										<input class="form-control" type="text" name="name"> </div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label>Category</label>
+										<select class="form-control" id="sel1" name="category">
+											<option value="">Select</option>
+                                        {% for category in categories %}
+                                            <option value="{{ category.id }}">{{ category.name }}</option>
+                                        {% endfor %}
+										</select>
+									</div>
+								</div>
+							<div class="col-md-4">
+									<div class="form-group">
+										<label>Supplier</label>
+										<select class="form-control" id="sel1" name="supplier">
+											<option value="">Select</option>
+                                        {% for supplier in suppliers %}
+                                            <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                                        {% endfor %}
+										</select>
+									</div>
+								</div>
+							
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Quantity</label>
+											<input type="number" class="form-control" name="quantity"> 
+									</div>
+								</div>
+                            
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Price</label>
+											<input type="number" class="form-control" name="price"> 
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="form-group">
+										<label>Description</label>
+                                        <textarea class="form-control" rows="5" id="comment" name="description"></textarea>
+								</div>
+								
+								</div>
+							</div>
+						
+
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary buttonedit1">Add Item </button>
+            </form>
+			</div>
+		</div>
+    
+    <script>
+    $(document).ready(function () {
+        $('.datetimepicker').datetimepicker({
+            format: 'YYYY-MM-DD'
+        });
+        $('#datetimepicker3').datetimepicker({
+            format: 'HH:mm'
+        });
+    });
+</script>
+
+
+{% endblock %}

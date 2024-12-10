@@ -1,0 +1,180 @@
+{% load static %}
+
+<script>
+    $(document).ready(function () {
+        // Set the CSRF token for Ajax requests
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", $("[name=csrfmiddlewaretoken]").val());
+                }
+            }
+        });
+
+        // Date-Time Picker
+        $('#datetimepicker3').datetimepicker({
+            format: 'LT'
+        });
+
+        $("#add_user_form").submit(function (e) {
+            e.preventDefault(); // Prevent the default form submission
+        
+            // Create FormData object
+            var formData = new FormData(this);
+        
+            // Send an Ajax request to the server
+            $.ajax({
+                type: "POST",
+                url: "{% url 'users' %}",  // Assuming 'add_user' is the name of your view
+                data: formData,
+                contentType: false, // Not to set any content type header
+                processData: false, // Not to process data
+                success: function (data) {
+                    // Handle the success response
+                    console.log(data);
+                    // Optionally, you can close the modal or perform other actions
+                    location.reload();
+                    $("#add_user").modal("hide");
+                    toastr.success(data.message, 'Success');
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+        
+                    // Clear existing error messages
+                    $(".text-danger").remove();
+        
+                    // Parse the JSON response from the server
+                    var response = JSON.parse(xhr.responseText);
+        
+                    // Display form errors on the form
+                    if (response.errors) {
+                        for (var field in response.errors) {
+                            var errorMessages = response.errors[field];
+                            var errorField = $("#id_" + field); // Adjust the field ID based on your form
+                            errorField.closest('.form-group').append('<div class="text-danger">' + errorMessages.join(', ') + '</div>');
+                        }
+                    }
+                    toastr.error('Something Went Wrong!, Try again!','Error');
+                }
+            });
+        });        
+
+        // Event handler for editing user
+        $('.edit-employee-btn').click(function (e) {
+            e.preventDefault();
+            var userId = $(this).data('user-id');
+
+            $.ajax({
+                url: '/edit-user/',
+                method: 'GET',
+                data: { 'id': userId },
+                success: function (data) {
+                    $('#editEmployeeForm input[name="id"]').val(data.id);
+                    $('#editEmployeeForm input[name="name"]').val(data.name);
+                    $('#editEmployeeForm input[name="username"]').val(data.username);
+                    $('#editEmployeeForm input[name="email"]').val(data.email);
+                    $('#editUserModal').modal('show');
+                },
+                error: function (error) {
+                    console.log("Error:", error);
+                }
+            });
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const productSelect = document.querySelector("select[name='product']");
+            const priceInput = document.querySelector("input[name='price']");
+
+            productSelect.addEventListener("change", function() {
+                const productId = productSelect.value;
+
+                // Send AJAX request to fetch the product price
+                fetch(`/get-product-price/${productId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.price) {
+                            // Set the price field with the fetched price
+                            priceInput.value = data.price;
+                        }
+                    })
+                    .catch(error => console.log('Error fetching product price:', error));
+            });
+        });
+
+
+
+
+
+        // Event handler for submitting edit form
+        $('#editEmployeeForm').submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: '/update-user/',
+                method: 'POST',
+                data: formData,
+                success: function (data) {
+                    $('#editUserModal').modal('hide');
+                    location.reload()
+                    // Update the relevant part of the UI with the new data
+                    // Example: $('#userRow' + data.id).html(data.updatedContent);
+                },
+                error: function (error) {
+                    console.log("Error:", error);
+                }
+            });
+        });
+
+                // Event handler for delete button click
+                $('.delete-btn').on('click', function () {
+                    var itemId = $(this).data('item-id');
+                    $('#deleteModal').modal('show');
+                });
+        
+                // Event handler for confirming delete
+                $('#confirmDelete').on('click', function () {
+                    var itemId = $('.delete-btn').data('item-id');
+                    $.ajax({
+                        type: 'POST',
+                        url: '/delete-user/' + itemId + '/',
+                        success: function (data) {
+                            
+                            location.reload()
+                            $('#deleteModal').modal('hide');
+                            toastr.success(data.message, 'Success');
+                            // Instead of reloading the entire page, update only the necessary part
+                            // Example: $('#userTable').load('/user-table/');
+                        },
+                        error: function (error) {
+                            console.log("Error:", error);
+                            toastr.error('Something Went Wrong!, Try again!','Error');
+                        }
+                        
+                    });
+                });
+        
+                // Event handler for canceling delete
+                $('#cancelDelete').on('click', function () {
+                    $('#deleteModal').modal('hide');
+                });
+
+                //Toastr
+                // Initialize Toastr.js
+                toastr.options = {
+                    "closeButton": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": true,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                  };
+    });
+</script>

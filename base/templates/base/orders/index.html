@@ -1,0 +1,85 @@
+{% extends 'main.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="page-wrapper">
+			<div class="content container-fluid">
+				<div class="page-header">
+					<div class="row align-items-center">
+						<div class="col">
+							<div class="mt-5">
+								<h4 class="card-title float-left mt-2">Orders</h4> 
+                                <a href="{% url 'create-order' %}" class="btn btn-primary float-right veiwbutton">Create Order </a> </div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="card card-table">
+							<div class="card-body booking_card">
+								<div class="table-responsive">
+									<table class="datatable table table-stripped table table-hover table-center mb-0">
+										<thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Customer</th>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for order in orders %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ order.customer }}</td>
+                                                <td>{{ order.product }}</td>
+                                                <td>{{ order.quantity }}</td>
+                                                <td>{{ order.price }}</td>
+                                                <td>{{ order.get_status_display }}</td>
+                                                <td>
+                                                    <a href="{% url 'edit_order' order.id %}">Edit</a>
+                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_modal_{{ order.id }}">
+    <i class="fas fa-trash-alt m-r-5"></i> Delete
+</a>
+
+<div id="delete_modal_{{ order.id }}" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete {{ order.product.name }}?</p>
+            </div>
+            <div class="modal-footer">
+                <form action="{% url 'delete_order' order.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+{% endblock %}
